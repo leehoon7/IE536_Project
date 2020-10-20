@@ -10,4 +10,4 @@ Setup time	1	2	3	4	5	6
 						
 Processing Time	67	110	117	119	124	140
 						
-Machine availability	Jobs 1, 6	¡æ	{M1}			
+Machine availability	Jobs 1, 6	ï¿½ï¿½	{M1}

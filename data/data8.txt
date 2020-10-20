@@ -24,6 +24,6 @@ Setup time	1	2	3	4	5	6	7	8	9	10	11	12	13	14	15	16	17	18	19	20
 																				
 Processing Time	146	73	88	98	85	72	51	118	111	118	115	132	127	63	84	67	72	75	137	87
 																				
-Machine availability	Jobs 1, 10, 11	¡æ	{M1}																	
-Machine availability	Jobs 2, 3, 5, 17, 18	¡æ	{M2, M3}																	
-Machine availability	Jobs 12, 13, 14	¡æ	{M3}																	
+Machine availability	Jobs 1, 10, 11	ï¿½ï¿½	{M1}
+Machine availability	Jobs 2, 3, 5, 17, 18	ï¿½ï¿½	{M2, M3}
+Machine availability	Jobs 12, 13, 14	ï¿½ï¿½	{M3}
