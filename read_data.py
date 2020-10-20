@@ -4,6 +4,7 @@ import numpy as np
 
 def read_data(file_name):
 
+    file_name = 'data/data' + str(file_name) + '.txt'
     data = {}
     with open(file_name) as csvfile:
         reader = csv.reader(csvfile, delimiter='\t')
@@ -49,7 +50,7 @@ def read_data(file_name):
 
 
 if __name__ == "__main__":
-    data = read_data('data/data1.txt')
+    data = read_data(1)
 
     print("instance         :", data['instance'])
     print("machine          :", data['m'])
