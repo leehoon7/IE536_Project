@@ -4,6 +4,7 @@ from read_data import read_data
 def check_satisfy_constraint(group, group_tag, constraint):
     pass
 
+
 def constraint_reverse(constraint):
 
     job_constraint = {}
@@ -20,7 +21,7 @@ def constraint_reverse(constraint):
 
 
 if __name__ == "__main__":
-    data = read_data(8)
+    data = read_data(10)
 
     job_constraint = constraint_reverse(data['constraint'])
     print(job_constraint)

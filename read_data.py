@@ -42,15 +42,24 @@ def read_data(file_name):
             else:
                 jobs = row[1][4:].split(',')
                 jobs = [int(job) - 1 for job in jobs]
-                machine = int(row[3][2:][:-1])  # 'third from to front' to 'second from to end' --> only machine
-                constraint[machine] = jobs
+
+                machines = row[2][7:].split(',')
+                machines = [int(machine) - 1 for machine in machines]
+
+                for job in jobs:
+                    for machine in machines:
+                        if job in constraint.keys():
+                            constraint[job].append(machine)
+                        else:
+                            constraint[job] = [machine]
+
         data['constraint'] = constraint
 
     return data
 
 
 if __name__ == "__main__":
-    data = read_data(1)
+    data = read_data(8)
 
     print("instance         :", data['instance'])
     print("machine          :", data['m'])
