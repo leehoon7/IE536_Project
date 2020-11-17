@@ -9,6 +9,8 @@ def check_satisfy_constraint(group, group_tag, constraint, idx):
 
     for i, tag_i in enumerate(group_tag):
         for tag_j in group_tag[i+1:]:
+            if (not tag_i) or (not tag_j):
+                continue
             if tag_i == tag_j:
                 return False
 
@@ -38,7 +40,7 @@ def should_be_tag(group, tag, constraint):
 
 
 if __name__ == "__main__":
-    data = read_data(6)
+    data = read_data(5)
 
     print(data['constraint'])
     # data['constraint'][3] = [0]
