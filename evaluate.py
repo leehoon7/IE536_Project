@@ -2,7 +2,6 @@ from read_data import read_data
 
 
 def evaluate(time_table, processing, path):
-
     sum = 0
     n = len(path)
     for i in range(n-1):
@@ -14,7 +13,7 @@ def evaluate(time_table, processing, path):
 
 if __name__ == "__main__":
     data = read_data(1)
-    time = evaluate(data['timetable'], data['processing'], [1-1, 2-1, 3-1])
+    time = evaluate(data['timetable'], data['processing'], [0, 1, 2])
 
     print("machine          :", data['m'])
     print("job              :", data['n'])

@@ -21,7 +21,7 @@ def read_data(file_name):
         timetable = []
         for i in range(data['n']):
             row = next(reader)[1:]
-            row[i] = 0
+            row[i] = 9999
             row = [int(time) for time in row]
             timetable.append(row)
         timetable = np.array(timetable)
