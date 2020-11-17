@@ -41,7 +41,7 @@ def read_data(file_name):
                 break
             else:
                 jobs = row[1][4:].split(',')
-                jobs = [int(job) for job in jobs]
+                jobs = [int(job) - 1 for job in jobs]
                 machine = int(row[3][2:][:-1])  # 'third from to front' to 'second from to end' --> only machine
                 constraint[machine] = jobs
         data['constraint'] = constraint
