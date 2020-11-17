@@ -59,7 +59,7 @@ def read_data(file_name):
 
 
 if __name__ == "__main__":
-    data = read_data(8)
+    data = read_data(6)
 
     print("instance         :", data['instance'])
     print("machine          :", data['m'])
