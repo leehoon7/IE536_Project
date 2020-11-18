@@ -63,8 +63,8 @@ def remove_inter_group(groups, timetable):
     n = len(groups)
     for i in range(n):
         for j in range(n):
-            if i == j:
-                continue
+            # if i == j:
+            #     continue
             print(groups[i][-1], groups[j][0])
             timetable[groups[i][-1]][groups[j][0]] = 9999
 
@@ -147,45 +147,34 @@ if __name__ == "__main__":
 
     while num_in_group < data['n']:
 
-        span = evaluate_schedule(group, data['timetable'], data['processing'])
-        argmin = span.index(min(span))
-        head, tail = group[argmin][0], group[argmin][-1]
+        heads, tails = [], []
+        for i in range(data['m']):
+            heads.append(group[i][0])
+            tails.append(group[i][-1])
 
         # remove all col without head.
         for i in range(data['n']):
-            if i != head:
+            if not (i in heads):
                 temp_timetable[:, i] = 9999
-
+        print(temp_timetable)
         # restore row correlated with tail.
         for i in range(data['n']):
-            if i == tail:
+            if i in tails:
                 temp_timetable[i] = before_state[0][i]
 
         print(temp_timetable)
         min_idx = temp_timetable.argmin()
         from_job, to_job = int(min_idx / data['n']), min_idx % data['n']
-
+        #
         print(from_job, to_job)
 
-        if from_job == tail:
-            group[argmin].append(to_job)
-        elif to_job == head:
-            group[argmin].insert(0, from_job)
+        for i in range(data['m']):
+            if from_job == tails[i]:
+                group[i].append(to_job)
+            if to_job == heads[i]:
+                group[i].insert(0, from_job)
 
         print(group)
-
-        tag = should_be_tag(group[argmin], group_tag[argmin], data['constraint'])
-        group_tag[argmin] = tag
-
-        satisfy = check_satisfy_constraint(group, group_tag, data['constraint'], argmin)
-        print("--")
-        print(satisfy)
-        print("--")
-
-        span = evaluate_schedule(group, data['timetable'], data['processing'])
-        print(span)
-
-        num_in_group = sum([len(g) for g in group])
 
         break
 
