@@ -29,7 +29,7 @@ def check_satisfy_constraint(group, group_tag, constraint, idx):
     return True
 
 
-def should_be_tag(group, tag, constraint):
+def should_be_tag(group, tag, constraint, group_tag):
 
     if len(constraint) == 0:
         return None
@@ -41,6 +41,10 @@ def should_be_tag(group, tag, constraint):
         if group_elem in constraint.keys():
             if len(constraint[group_elem]) == 1:
                 return constraint[group_elem][0]
+            elif len(constraint[group_elem]) == 2:
+                temp = list(set(constraint[group_elem]) - set(group_tag))
+                if len(temp) == 1:
+                    return temp[0]
 
     return None
 
@@ -63,16 +67,13 @@ def remove_inter_group(groups, timetable):
     n = len(groups)
     for i in range(n):
         for j in range(n):
-            # if i == j:
-            #     continue
-            print(groups[i][-1], groups[j][0])
             timetable[groups[i][-1]][groups[j][0]] = 9999
 
     return timetable
 
 
 if __name__ == "__main__":
-    data = read_data(2)
+    data = read_data(10)
 
     print(data['constraint'])
     # data['constraint'][3] = [0]
@@ -106,7 +107,7 @@ if __name__ == "__main__":
         group[i].append(from_job)
         group[i].append(to_job)
 
-        tag = should_be_tag(group[i], group_tag[i], data['constraint'])
+        tag = should_be_tag(group[i], group_tag[i], data['constraint'], group_tag)
         group_tag[i] = tag
 
         satisfy = check_satisfy_constraint(group, group_tag, data['constraint'], i)
@@ -131,22 +132,23 @@ if __name__ == "__main__":
 
         cnt += 1
 
-    print(i)
+    # print(i)
     span = evaluate_schedule(group, data['timetable'], data['processing'])
     print(span)
 
     num_in_group = sum([len(g) for g in group])
-    print(num_in_group)
-    print(temp_timetable)
+    # print(num_in_group)
+    # print(temp_timetable)
 
     # different group eliminate..
     temp_timetable = remove_inter_group(group, temp_timetable)
     before_state[0] = temp_timetable.copy()
 
-    print(temp_timetable)
-
+    # print(temp_timetable)
+    cnt = 0
     while num_in_group < data['n']:
 
+        tt_timetable = temp_timetable.copy()
         heads, tails = [], []
         for i in range(data['m']):
             heads.append(group[i][0])
@@ -155,26 +157,68 @@ if __name__ == "__main__":
         # remove all col without head.
         for i in range(data['n']):
             if not (i in heads):
-                temp_timetable[:, i] = 9999
-        print(temp_timetable)
+                tt_timetable[:, i] = 9999
+        # print(temp_timetable)
         # restore row correlated with tail.
         for i in range(data['n']):
             if i in tails:
-                temp_timetable[i] = before_state[0][i]
+                tt_timetable[i] = before_state[0][i]
 
         print(temp_timetable)
-        min_idx = temp_timetable.argmin()
+        min_idx = tt_timetable.argmin()
         from_job, to_job = int(min_idx / data['n']), min_idx % data['n']
         #
         print(from_job, to_job)
 
+        group_idx = None
+        case = None
         for i in range(data['m']):
             if from_job == tails[i]:
                 group[i].append(to_job)
+                group_idx = i
+                case = 1
             if to_job == heads[i]:
                 group[i].insert(0, from_job)
+                group_idx = i
+                case = 2
 
-        print(group)
+        tag = should_be_tag(group[group_idx], group_tag[group_idx], data['constraint'], group_tag)
+        group_tag[group_idx] = tag
+        satisfy = check_satisfy_constraint(group, group_tag, data['constraint'], group_idx)
 
-        break
+        print("group..      :", group)
+        print("group tag    :", group_tag)
+        print("constraint   :", satisfy)
+
+        if satisfy:
+            print("group : ", group)
+
+            if case == 1:
+                temp_timetable[:, to_job] = 9999
+            elif case == 2:
+                temp_timetable[from_job, :] = 9999
+
+            temp_timetable = remove_inter_group(group, temp_timetable)
+
+            before_state = [temp_timetable.copy(), copy.deepcopy(group), copy.deepcopy(group_tag)]
+            print("it satisfy.. add edge !")
+        else:
+            group = copy.deepcopy(before_state[1])
+            group_tag = copy.deepcopy(before_state[2])
+
+            temp_timetable[from_job][to_job] = 9999
+            before_state = [temp_timetable.copy(), copy.deepcopy(group), copy.deepcopy(group_tag)]
+            print("it doesn't satisfy.. ")
+
+        cnt += 1
+        # if cnt == 20:
+        #     break
+        print("----------------------")
+
+        num_in_group = sum([len(g) for g in group])
+
+    print(temp_timetable, group, group_tag)
+
+    span = evaluate_schedule(group, data['timetable'], data['processing'])
+    print(span)
 
