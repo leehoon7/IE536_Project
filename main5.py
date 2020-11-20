@@ -91,21 +91,21 @@ def remove_inter_group(groups, timetable):
     return timetable
 
 
-if __name__ == "__main__":
-    data = read_data(10)
+def main_algorithm(file_num):
+    data = read_data(file_num)
 
-    print(data['constraint'])
+    # print(data['constraint'])
     # data['constraint'][3] = [0]
 
     temp_timetable = data['timetable'].copy()
 
     group = [[] for _ in range(data['m'])]
     group_tag = [None for _ in range(data['m'])]
-    print(group)
+    # print(group)
 
     before_state = [temp_timetable.copy(), copy.deepcopy(group), copy.deepcopy(group_tag)]
 
-    print("------------------------")
+    # print("------------------------")
 
     # set starting edge
     i = 0
@@ -121,7 +121,7 @@ if __name__ == "__main__":
             temp_timetable[from_job][idx] = 9999
             temp_timetable[idx][to_job] = 9999
 
-        print(from_job, "->", to_job)
+        # print(from_job, "->", to_job)
 
         group[i].append(from_job)
         group[i].append(to_job)
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         if satisfy:
             i += 1
             before_state = [temp_timetable.copy(), copy.deepcopy(group), copy.deepcopy(group_tag)]
-            print("it satisfy.. add edge !")
+            # print("it satisfy.. add edge !")
         else:
             temp_timetable = before_state[0].copy()
             group = copy.deepcopy(before_state[1])
@@ -142,18 +142,18 @@ if __name__ == "__main__":
 
             temp_timetable[from_job][to_job] = 9999
             before_state = [temp_timetable.copy(), copy.deepcopy(group), copy.deepcopy(group_tag)]
-            print("it doesn't satisfy.. ")
-
-        print("group.. : ", group)
-        print("group tag : ", group_tag)
-        print("constraint : ", satisfy)
-        print("------------------------")
+        #     print("it doesn't satisfy.. ")
+        #
+        # print("group.. : ", group)
+        # print("group tag : ", group_tag)
+        # print("constraint : ", satisfy)
+        # print("------------------------")
 
         cnt += 1
 
     # print(i)
     span = evaluate_schedule(group, data['timetable'], data['processing'])
-    print(span)
+    # print(span)
 
     num_in_group = sum([len(g) for g in group])
     # print(num_in_group)
@@ -168,12 +168,12 @@ if __name__ == "__main__":
     constraint_job = set(data['constraint'].keys())
     all_job = set(range(data['n']))
 
-    print("all job          :", all_job)
-    print("constraint job   :", constraint_job)
-    print("group set        :", group_set)
-
-    print("to do  : ", constraint_job - group_set)
-    print("remove : ", (all_job - group_set) - constraint_job)
+    # print("all job          :", all_job)
+    # print("constraint job   :", constraint_job)
+    # print("group set        :", group_set)
+    #
+    # print("to do  : ", constraint_job - group_set)
+    # print("remove : ", (all_job - group_set) - constraint_job)
     remove_job = list((all_job - group_set) - constraint_job)
     todo_job = constraint_job - group_set
 
@@ -182,8 +182,8 @@ if __name__ == "__main__":
             temp_timetable[i][job] = 9999
             temp_timetable[job][i] = 9999
 
-    print(temp_timetable)
-    print("-----------------")
+    # print(temp_timetable)
+    # print("-----------------")
 
     heads, tails = [], []
     for i in range(data['m']):
@@ -195,7 +195,7 @@ if __name__ == "__main__":
 
         min_idx = temp_timetable.argmin()
         from_job, to_job = int(min_idx / data['n']), min_idx % data['n']
-        print(from_job, to_job)
+        # print(from_job, to_job)
 
         group_idx = None
         case = None
@@ -224,9 +224,9 @@ if __name__ == "__main__":
         temp_group_tag[group_idx] = tag
         satisfy = check_satisfy_constraint(temp_group, temp_group_tag, data['constraint'], group_idx)
 
-        print(satisfy)
-        print(temp_group, temp_group_tag)
-        print("--------------")
+        # print(satisfy)
+        # print(temp_group, temp_group_tag)
+        # print("--------------")
 
         if satisfy:
             group = copy.deepcopy(temp_group)
@@ -245,9 +245,9 @@ if __name__ == "__main__":
         group_set = set.union(*[set(g) for g in group])
 
     span = evaluate_schedule(group, data['timetable'], data['processing'])
-    print(group)
-    print(group_tag)
-    print(span)
+    # print(group)
+    # print(group_tag)
+    # print(span)
 
     temp_timetable = data['timetable'].copy()
     temp_timetable = remove_inter_group(group, temp_timetable)
@@ -263,7 +263,7 @@ if __name__ == "__main__":
     group_set = set.union(*[set(g) for g in group])
     all_job = set(range(data['n']))
     todo_job = list(all_job - group_set)
-    print(todo_job)
+    # print(todo_job)
 
     for j in todo_job:
         temp_timetable[j, :] += data['processing'][j]
@@ -274,45 +274,45 @@ if __name__ == "__main__":
     # temp_timetable += np.random.random_sample((data['n'], data['n']))
     # print(temp_timetable)
 
-    print(span)
-    print(todo_job)
-    print("------------phase 3--------")
+    # print(span)
+    # print(todo_job)
+    # print("------------phase 3--------")
     cnt = 0
     while len(group_set) < data['n']:
 
         span = evaluate_schedule(group, data['timetable'], data['processing'])
-        print(span)
+        # print(span)
         arg_min = span.index(min(span))
         cand1, cand2 = group[arg_min][0], group[arg_min][-1]
-        print(cand1, cand2)
+        # print(cand1, cand2)
 
         all_cand = np.concatenate([temp_timetable[:, cand1], temp_timetable[cand2, :]])
-        print(all_cand)
-        print(all_cand.min())
-        if all_cand.argmin()/data['n'] < 1:
-            print(all_cand.argmin(), cand1)
+        # print(all_cand)
+        # print(all_cand.min())
+        if all_cand.argmin() / data['n'] < 1:
+            # print(all_cand.argmin(), cand1)
             from_job, to_job = int(all_cand.argmin()), int(cand1)
         else:
-            print(cand2, all_cand.argmin() - data['n'])
+            # print(cand2, all_cand.argmin() - data['n'])
             from_job, to_job = int(cand2), int(all_cand.argmin() - data['n'])
 
         # from_job, to_job = np.where(temp_timetable == all_cand.min())
         # from_job, to_job = int(from_job[0]), int(to_job[0])
-        print(from_job, to_job)
+        # print(from_job, to_job)
 
         if cand1 == to_job:
             group[arg_min].insert(0, from_job)
             temp_timetable[from_job, :] = 9999
             temp_timetable[:, group[arg_min][1]] = 9999
-            print("case1!!")
+            # print("case1!!")
         elif cand2 == from_job:
             group[arg_min].append(to_job)
             temp_timetable[:, to_job] = 9999
             temp_timetable[group[arg_min][-2], :] = 9999
-            print("case2!!")
+            # print("case2!!")
 
-        print(group)
-        print("-----------")
+        # print(group)
+        # print("-----------")
 
         temp_timetable = data['timetable'].copy()
         temp_timetable = remove_inter_group(group, temp_timetable)
@@ -328,7 +328,7 @@ if __name__ == "__main__":
         group_set = set.union(*[set(g) for g in group])
         all_job = set(range(data['n']))
         todo_job = list(all_job - group_set)
-        print(todo_job)
+        # print(todo_job)
 
         for j in todo_job:
             temp_timetable[j, :] += data['processing'][j]
@@ -338,17 +338,28 @@ if __name__ == "__main__":
         # if cnt == 1:
         #     break
 
-    print(group)
-    print(group_tag)
+    # print(group)
+    # print(group_tag)
     span = evaluate_schedule(group, data['timetable'], data['processing'])
-    print(span)
-    print(data['processing'])
-    print(sum(data['processing'])/data['m'])
+    # print(span)
+    # print(data['processing'])
+    # print(sum(data['processing']) / data['m'])
 
     span, str_g = print_schedule(group, data['timetable'], data['processing'])
     for str_g_elem in str_g:
         print(str_g_elem)
 
-    print(data['timetable'][28][25])
+    return max(span), span, group, group_tag
+
+
+if __name__ == "__main__":
+
+    for i in range(10):
+        print("------------- data %d -------------" % i)
+        max_span, span, group, group_tag = main_algorithm(i+1)
+        print(max_span, span)
+        print(group)
+        print(group_tag)
+        print("")
 
 
